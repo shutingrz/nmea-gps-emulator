@@ -10,6 +10,7 @@ import serial.tools.list_ports
 
 from utils import exit_script
 
+SLEEP_TIME = 0.3
 
 def run_telnet_server_thread(srv_ip_address: str, srv_port: str, nmea_obj) -> None:
     """
@@ -135,7 +136,7 @@ class NmeaStreamThread(NmeaSrvThread):
                                 s.send(nmea.encode())
                                 time.sleep(0.05)
                             # Start next loop after 1 sec
-                        time.sleep(1 - (time.perf_counter() - timer_start))
+                        time.sleep(max(0, min(SLEEP_TIME, SLEEP_TIME - (time.perf_counter() - timer_start))))
             except (OSError, TimeoutError, ConnectionRefusedError, BrokenPipeError) as err:
                 print(f'\n*** Error: {err.strerror} ***\n')
                 exit_script()
